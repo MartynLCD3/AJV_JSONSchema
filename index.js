@@ -1,17 +1,17 @@
 const Ajv = require('ajv').default;
 const AjvFormats = require('ajv-formats');
-const ajv = new Ajv();
+const ajv = new Ajv({ useDefaults: true });
 AjvFormats(ajv);
 
 const obj = {
-    username: 'martyn@protonmail.com',
+    username: 'martyn',
     techs: {
         javascript: true,
         php: true,
         rust: false
     },
     exp: 1,
-    date: '2021-12-23',
+    date: '2020-12-12',
     email: 'martyn@gmail.com'
 }
 
@@ -29,10 +29,11 @@ const schema = {
             required: ['javascript', 'php', 'rust'],
         },
         exp: { type: 'number' },
-        date: { type: 'string', format: 'date-time' },
-        email: {type: "string", format: 'email-format'}
+        date: { type: 'string', format: 'date-time', default: '' },
+        email: {type: 'string', format: 'email-format'},
+        year: { type: 'number', default: 1},
     },
-    required: ['username', 'techs', 'exp', 'date', 'email']
+    required: ['username','techs', 'exp', 'date', 'email', 'year']
 }
 
 const dateRegex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
@@ -46,4 +47,16 @@ const check = async (data, structure) => {
         return resp;
 }
 
-check(obj, schema).then(console.log)
+check(obj, schema).then(console.log) // true
+
+/*
+ *  {
+ *      username: 'martyn',
+ *      techs: { javascript: true, php: true, rust: false },
+ *      exp: 1,
+ *      date: '2020-12-12',
+ *      email: 'martyn@gmail.com',
+ *      year: 1
+ *  }
+ *
+ */
